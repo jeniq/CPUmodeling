@@ -35,20 +35,17 @@ public class CPUProcess extends Thread{
             try {
                 Thread.sleep(processes[i].generateTime()); // generating process
 
-                if (!cpu2.isBusy() && name == 2){
-                    System.out.println("Adding to queue " + processes[i].getProcessName());
-                    queue.add(processes[i]);
-                    i++;
-                    continue;
-                }
                 if (!cpu1.isBusy()){
                     cpu1.executeProcess(processes[i]);
                 }else if (!cpu2.isBusy()){
-                    cpu2.executeProcess(processes[i]);
-                }else if (name == 1){
-                    System.out.println("Removed " + processes[i]);
+                   cpu2.executeProcess(processes[i]);
+                }else if (name == 2){
+                    queue.add(processes[i]);
+                }else{
+                    System.out.println("Removed " + processes[i].getProcessName());
                     processes[i] = null;
                 }
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

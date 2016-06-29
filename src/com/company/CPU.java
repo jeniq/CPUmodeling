@@ -19,11 +19,12 @@ public class CPU extends Thread{
         upperLimit = max;
     }
 
-    public synchronized void executeProcess(Process process){
+
+    public void executeProcess(Process process){
         isBusy = true;
         try {
             System.out.println(name + ": Executing " + process.getProcessName());
-            wait(generateTime());
+            Thread.sleep(generateTime());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }finally {
@@ -35,7 +36,7 @@ public class CPU extends Thread{
         return lowerLimit + (long)(Math.random()*(upperLimit - lowerLimit) + 1);
     }
 
-    public boolean isBusy() {
+    public synchronized boolean isBusy() {
         return isBusy;
     }
 }
