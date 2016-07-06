@@ -9,9 +9,11 @@ package com.company;
  */
 public class Process extends CPUProcess{
     private String processName;
+    private String threadName;
 
-    public Process(String processName) {
+    public Process(String processName, String threadName) {
         this.processName = processName;
+        this.threadName = threadName;
     }
 
     public String getProcessName() {
@@ -20,5 +22,9 @@ public class Process extends CPUProcess{
 
     public long generateTime(){
         return lowerLimit + (long)(Math.random()*(upperLimit - lowerLimit) + 1);
+    }
+
+    public String getThreadName() {
+        return threadName;
     }
 }

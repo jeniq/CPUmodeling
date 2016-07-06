@@ -12,19 +12,38 @@ import java.util.List;
  * @author Yevhen Hryshchenko
  */
 public class CPUQueue {
-    private List<CPUProcess> processQueue = new LinkedList<>();
+    private int maxSize = 0;
+    private LinkedList<Process> processQueue = new LinkedList<>();
 
-    public List<CPUProcess> getProcessQueue() {
+    public List<Process> getProcessQueue() {
         return processQueue;
     }
 
     // Adding process to the queue
-    public synchronized void add(CPUProcess process){
-        processQueue.add(process);
+    public synchronized void add(Process process){
+        processQueue.addFirst(process);
     }
 
     // Removing process from the queue
-    public void remove(CPUProcess process){
-        processQueue.remove(process);
+    public synchronized Process remove(){
+        if (processQueue.size() > 0){
+            return processQueue.removeLast();
+        }else{
+            return null;
+        }
+    }
+
+    public synchronized int size(){
+        return processQueue.size();
+    }
+
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    public void checkSize(){
+        if (size() > maxSize){
+            maxSize = size();
+        }
     }
 }

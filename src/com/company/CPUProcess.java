@@ -4,18 +4,18 @@ package com.company;
  * This class implements thread of processes.
  * It defines CPU for executing process.
  *
- * @version 27 June 2016
+ * @version 30 June 2016
  * @author Yevhen Hryshchenko
  */
 public class CPUProcess extends Thread{
-    protected long lowerLimit;
-    protected long upperLimit;
-    private int numOfProcesses;
-    private Process[] processes;
-    private CPUQueue queue;
+    protected long lowerLimit; // minimum time for generating process
+    protected long upperLimit; // maximum time for generating process
+    private CPUQueue queue; // queue of processes
     private CPU cpu1;
     private CPU cpu2;
-    private int name;
+    private int numOfProcesses; // number of processes
+    private int name; // processes' thread name
+    private volatile int numberOfLostProcesses = 0;
 
     protected CPUProcess(){}
 
@@ -25,32 +25,31 @@ public class CPUProcess extends Thread{
         this.cpu1 = cpu1;
         this.cpu2 = cpu2;
         numOfProcesses = n;
-        processes = new Process[numOfProcesses];
     }
 
     public void run(){
-        int i = 0;
-        while (i < numOfProcesses){
-            processes[i] = new Process("Process" + i + "; Thread" + name);
+        for (int i = 0; i < numOfProcesses; i++){
+            Process process = new Process("Process" + i, "Thread" + name);
             try {
-                Thread.sleep(processes[i].generateTime()); // generating process
-
+                Thread.sleep(process.generateTime()); // generating process
                 if (!cpu1.isBusy()){
-                    cpu1.executeProcess(processes[i]);
+                    cpu1.setProcess(process);
                 }else if (!cpu2.isBusy()){
-                   cpu2.executeProcess(processes[i]);
+                    cpu2.setProcess(process);
                 }else if (name == 2){
-                    queue.add(processes[i]);
+                    System.out.println("Add to queue " + process.getProcessName() + " " + process.getThreadName());
+                    queue.add(process);
                 }else{
-                    System.out.println("Removed " + processes[i].getProcessName());
-                    processes[i] = null;
+                    System.out.println("Lost " + process.getProcessName() + " " + process.getThreadName());
+                    numberOfLostProcesses++;
                 }
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            i++;
         }
     }
 
+    public int getNumberOfLostProcesses() {
+        return numberOfLostProcesses;
+    }
 }
